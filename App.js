@@ -109,6 +109,7 @@ export default class App extends Component {
 
 const styles = StyleSheet.create({
     container: {
+        maxHeight: Constants.MAX_HEIGHT,
         flex: 1,
         backgroundColor: '#fff',
     },
@@ -127,6 +128,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
+        backgroundColor: 'tomato',
     },
     gameOverText: {
         color: 'white',
