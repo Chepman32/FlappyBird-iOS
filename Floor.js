@@ -23,7 +23,7 @@ export default class Floor extends Component {
                     flexDirection: 'row'
                 }}>
                 {Array.apply(null, Array(imageIterations)).map(( el, idx) => {
-                    return <Image style={{ width: height, height: height }} key={idx} resizeMode="stretch" source={require("./assets/Images/floor.png")} />
+                    return <Image style={{ width: height, height: height }} key={idx} resizeMode="stretch" source={require("./assets/img/floor.png")} />
                 })}
             </View>
     );

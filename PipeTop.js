@@ -19,7 +19,7 @@ export default class PipeTop extends Component {
                     height: height,
                 }}
                 resizeMode="stretch"
-                source={require('./assets/Images/pipe_top.png')} />
+                source={require('./assets/img/pipe_top.png')} />
     );
   }
 }

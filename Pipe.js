@@ -24,7 +24,7 @@ export default class Pipe extends Component {
                     flexDirection: 'column'
                 }}>
                 {Array.apply(null, Array(pipeIterations)).map(( el, idx) => {
-                    return <Image style={{ width: width, height: pipeHeight }} key={idx} resizeMode="stretch" source={require('./assets/Images/pipe_core.png')} />
+                    return <Image style={{ width: width, height: pipeHeight }} key={idx} resizeMode="stretch" source={require('./assets/img/pipe_core.png')} />
                 })}
             </View>
     );
