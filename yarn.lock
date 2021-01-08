@@ -2367,6 +2367,11 @@ expand-brackets@^2.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
+expo-ads-admob@~8.4.0:
+  version "8.4.0"
+  resolved "https://registry.yarnpkg.com/expo-ads-admob/-/expo-ads-admob-8.4.0.tgz#2aa7440393af7ff00b9868d59b0fa06fd0b970e7"
+  integrity sha512-w+ZjMCfCGzB1BNyr0+oYJijSArq3+oTnJSMoMIuDueqtbSyeLCqKfe9zhRqat4qNczvSmJ6tL6DYZweqPLWtYw==
+
 expo-application@~2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/expo-application/-/expo-application-2.4.1.tgz#f8eb4a3a05a0b8a8f38f2e981f587a815945b685"
@@ -3534,10 +3539,10 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
-matter-js@^0.13.0:
-  version "0.13.0"
-  resolved "https://registry.yarnpkg.com/matter-js/-/matter-js-0.13.0.tgz#c13025a76288fad813c747498dc445616253b3f5"
-  integrity sha512-YX6EI5dPz3E7rjt4Z0Uu1kAV2HU8X+3pNZBGjkloU/yrxKI3XUZMfj1lncXltGuG+RFZA/81rD+7wSVjAPvciQ==
+matter-js@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/matter-js/-/matter-js-0.15.0.tgz#92b86b3b374a8b948657697fc07c16e3bc86e2d7"
+  integrity sha512-+SXrgSz0IbbXo5pifWnw/IlWVrkrZXPI+2gMdvI6BCHpXrgRsmlj2wGKVBmjZC6qzBNM2ImqHCRuYhmEmwTOlA==
 
 md5-file@^3.2.3:
   version "3.2.3"
@@ -4354,6 +4359,10 @@ plugin-error@^0.1.2:
     arr-diff "^1.0.1"
     arr-union "^2.0.1"
     extend-shallow "^1.1.2"
+
+"poly-decomp@git://github.com/schteppe/poly-decomp.js.git":
+  version "0.3.0"
+  resolved "git://github.com/schteppe/poly-decomp.js.git#4eebc5b5780d8ffd8094615622b701e34a7835e8"
 
 posix-character-classes@^0.1.0:
   version "0.1.1"

@@ -6,6 +6,14 @@ import Bird from './Bird';
 import Floor from './Floor';
 import Physics, { resetPipes } from './Physics';
 import Constants from './Constants';
+// AdMob
+import {
+    AdMobBanner,
+    AdMobInterstitial,
+    PublisherBanner,
+    AdMobRewarded
+   } from "expo-ads-admob"
+   const { width, height } = Dimensions.get("screen")
 export default class App extends Component {
     constructor(props){
         super(props);
@@ -19,6 +27,35 @@ export default class App extends Component {
 
         this.entities = this.setupWorld();
     }
+
+    bannerError = () => {
+        console.log('banner ad not loading')
+      }
+    bannerAdReceived = () => {
+        console.log('banner ad received')
+      }
+    showInterstitial = async () => {
+        AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712'); // Test ID, Replace with your-admob-unit-id
+        
+        try{
+          await AdMobInterstitial.requestAdAsync();
+          await AdMobInterstitial.showAdAsync();
+        }
+        catch(e){
+          console.log(e);
+        }
+    }
+    showRewarded = async () => {
+        AdMobRewarded.setAdUnitID('ca-app-pub-3940256099942544/5224354917'); // Test ID, Replace with your-admob-unit-id
+        
+        try{
+          await AdMobRewarded.requestAdAsync();
+          await AdMobRewarded.showAdAsync();
+        }
+        catch(e){
+          console.log(e);
+        }
+      }
 
     setupWorld = () => {
         let engine = Matter.Engine.create({ enableSleeping: false });
@@ -102,6 +139,12 @@ export default class App extends Component {
                         <Text style={styles.gameOverSubText}>Try Again</Text>
                     </View>
                 </TouchableOpacity>}
+                <AdMobBanner style={styles.bottomBanner}
+   bannerSize="fullBanner"
+   adUnitID="ca-app-pub-3940256099942544/1044960115"
+   onDidFailToReceiveAdWithError={this.bannerError}
+   onAdViewDidReceiveAd = {this.bannerAdReceived} />
+   <View style={{...styles.bottomBanner, backgroundColor: "#ccc"}}></View>
             </View>
         );
     }
@@ -166,5 +209,10 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         flex: 1
-    }
+    },
+    bottomBanner: {
+        height: height * 0.1,
+        position: "absolute",
+        bottom: 0
+      },
 });
