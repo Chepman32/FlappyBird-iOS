@@ -21,6 +21,7 @@ export default class App extends Component {
         this.state = {
             running: true,
             score: 0,
+            played: 0,
         };
 
         this.gameEngine = null;
@@ -114,16 +115,17 @@ export default class App extends Component {
         resetPipes();
         this.gameEngine.swap(this.setupWorld());
         this.setState({
+            played: this.state.played + 1,
             running: true,
-            score: 0
+            score: 0,
         });
+        console.log(this.state.played)
     }
 
     render() {
         return (
-            <View style={{ flex: 1}}>
-                <View style={styles.container}>
-                <Image source={require("./assets/img/background.png").background} style={styles.backgroundImage} resizeMode="stretch" />
+            <View style={styles.container}>
+                <Image source={Images.background} style={styles.backgroundImage} resizeMode="stretch" />
                 <GameEngine
                     ref={(ref) => { this.gameEngine = ref; }}
                     style={styles.gameContainer}
@@ -140,22 +142,25 @@ export default class App extends Component {
                         <Text style={styles.gameOverSubText}>Try Again</Text>
                     </View>
                 </TouchableOpacity>}
-            </View>
-            <AdMobBanner
-            bannerSize="fullBanner"
-                style={styles.bottomBanner}
+                <PublisherBanner
   bannerSize="fullBanner"
+  style={styles.bottomBanner}
   adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ID, Replace with your-admob-unit-id
-  servePersonalizedAds // true or false
-  onDidFailToReceiveAdWithError={this.bannerError} />
+  onDidFailToReceiveAdWithError={this.bannerError}
+  onAdMobDispatchAppEvent={this.adMobEvent} />
             </View>
         );
     }
 }
 
 const styles = StyleSheet.create({
+    bottomBanner: {
+        minHeight: height * 0.1,
+        position: "absolute",
+        bottom: 0,
+        backgroundColor: "#ccc"
+      },
     container: {
-        maxHeight: Constants.MAX_HEIGHT,
         flex: 1,
         backgroundColor: '#fff',
     },
@@ -174,11 +179,11 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: '#fff',
     },
     gameOverText: {
         color: 'white',
         fontSize: 48,
+        fontFamily: '04b_19'
     },
     gameOverSubText: {
         color: 'white',
@@ -213,10 +218,4 @@ const styles = StyleSheet.create({
         right: 0,
         flex: 1
     },
-    bottomBanner: {
-        height: height * 0.1,
-        position: "absolute",
-        bottom: 0,
-        backgroundColor: "#ccc"
-      },
 });
