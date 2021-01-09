@@ -119,6 +119,9 @@ export default class App extends Component {
             running: true,
             score: 0,
         });
+        if(this.state.played % 5 === 0) {
+            this.showInterstitial()
+        }
         console.log(this.state.played)
     }
 
@@ -154,6 +157,10 @@ export default class App extends Component {
 }
 
 const styles = StyleSheet.create({
+    interstitialBanner: {
+        width: "100%",
+        marginLeft: 0
+      },
     bottomBanner: {
         minHeight: height * 0.1,
         position: "absolute",
@@ -183,7 +190,6 @@ const styles = StyleSheet.create({
     gameOverText: {
         color: 'white',
         fontSize: 48,
-        fontFamily: '04b_19'
     },
     gameOverSubText: {
         color: 'white',
