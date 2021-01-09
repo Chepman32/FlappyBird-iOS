@@ -121,7 +121,8 @@ export default class App extends Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <View style={{ flex: 1}}>
+                <View style={styles.container}>
                 <Image source={require("./assets/img/background.png").background} style={styles.backgroundImage} resizeMode="stretch" />
                 <GameEngine
                     ref={(ref) => { this.gameEngine = ref; }}
@@ -139,12 +140,14 @@ export default class App extends Component {
                         <Text style={styles.gameOverSubText}>Try Again</Text>
                     </View>
                 </TouchableOpacity>}
-                <AdMobBanner style={styles.bottomBanner}
-   bannerSize="fullBanner"
-   adUnitID="ca-app-pub-3940256099942544/1044960115"
-   onDidFailToReceiveAdWithError={this.bannerError}
-   onAdViewDidReceiveAd = {this.bannerAdReceived} />
-   <View style={{...styles.bottomBanner, backgroundColor: "#ccc"}}></View>
+            </View>
+            <AdMobBanner
+            bannerSize="fullBanner"
+                style={styles.bottomBanner}
+  bannerSize="fullBanner"
+  adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ID, Replace with your-admob-unit-id
+  servePersonalizedAds // true or false
+  onDidFailToReceiveAdWithError={this.bannerError} />
             </View>
         );
     }
@@ -171,7 +174,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: 'tomato',
+        backgroundColor: '#fff',
     },
     gameOverText: {
         color: 'white',
@@ -213,6 +216,7 @@ const styles = StyleSheet.create({
     bottomBanner: {
         height: height * 0.1,
         position: "absolute",
-        bottom: 0
+        bottom: 0,
+        backgroundColor: "#ccc"
       },
 });
