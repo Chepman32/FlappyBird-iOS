@@ -150,17 +150,28 @@ this.showRewarded()
                     <Text style={styles.pauseBtnText} >&#10074; &#10074;</Text>
                 </TouchableWrapper>
                 <Text style={styles.score}>{this.state.score}</Text>
-                {!this.state.running && !this.state.paused && <TouchableWrapper style={styles.fullScreenButton} onPress={this.reset}>
+                {
+                !this.state.running && !this.state.paused &&
+                 <TouchableWrapper style={styles.fullScreenButton} onPress={this.reset}>
                     <View style={styles.fullScreen}>
                         <Text style={styles.gameOverText}>Game Over</Text>
-                        <Text style={styles.gameOverSubText}>Try Again</Text>
-                        <Text style={styles.gameOverSubText}
-                         onPress={() => this.props.navigation.navigate("StartScreen")} >Go home
-                         </Text>
+                        <TouchableWrapper
+                         style={{ flexDirection: "row", paddingVertical: 25 }}
+                          onPress={() => this.props.navigation.navigate("StartScreen")} >
+                            <Image source={require("../assets/img/back.png")} style={styles.icon} />
+                            <Text style={styles.gameOverSubText}>Go home </Text>
+                             </TouchableWrapper>
+                             <TouchableWrapper
+                         style={{ flexDirection: "row", paddingVertical: 25}} >
+                            <Image source={require("../assets/img/refresh.png")} style={styles.icon} />
+                            <Text style={styles.gameOverSubText}>Try Again</Text>
+                             </TouchableWrapper>
                     </View>
-                </TouchableWrapper>}
+                </TouchableWrapper>
+                }
                 
-                {!this.state.running && this.state.paused && 
+                {
+                !this.state.running && this.state.paused && 
                 <TouchableWrapper style={styles.fullScreenButton} onPress={() => this.setState({ running: true, paused: false })} >
                     <View style={styles.fullScreen}>
                         <Text style={styles.gameOverText}>Game paused</Text>
@@ -169,7 +180,8 @@ this.showRewarded()
                          onPress={() => this.props.navigation.navigate("StartScreen")} >Go home
                          </Text>
                     </View>
-                </TouchableWrapper>}
+                </TouchableWrapper>
+                }
                 <PublisherBanner
   bannerSize="fullBanner"
   style={styles.bottomBanner}
@@ -208,7 +220,7 @@ const styles = StyleSheet.create({
     },
     gameOverSubText: {
         color: 'white',
-        fontSize: 24,
+        fontSize: height * 0.03,
     },
     fullScreen: {
         position: 'absolute',
@@ -239,6 +251,11 @@ const styles = StyleSheet.create({
     },
     pauseBtnText: {
         fontSize: height * 0.04,
+    },
+    icon: {
+        width: 30,
+        height: 30,
+        marginRight: width * 0.05
     },
     fullScreenButton: {
         position: 'absolute',
