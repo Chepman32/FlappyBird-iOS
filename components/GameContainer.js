@@ -1,6 +1,8 @@
-import React, { Component } from 'react';
+import React, { Component, useState,useEffect } from 'react';
 import { Dimensions, StyleSheet, Text, View, StatusBar, Alert, TouchableOpacity, Image, Platform, TouchableWithoutFeedback, Button } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { GameEngine } from "react-native-game-engine";
+import { useNavigation } from '@react-navigation/native'
 import Matter from "matter-js";
 import Bird from './Bird';
 import Physics, { resetPipes } from '../Physics';
@@ -18,7 +20,7 @@ import Floor from './Floor';
        "android": TouchableWithoutFeedback,
        "ios": TouchableOpacity
    })
-export default class GameContainer extends Component {
+ class GameContainer extends Component {
     constructor(props){
         super(props);
 
@@ -32,7 +34,14 @@ export default class GameContainer extends Component {
 
         this.entities = this.setupWorld();
     }
-
+componentDidMount() {
+    this.props.setScore(this.state.score)
+    this.props.setHighScore(this.state.score)
+}
+componentDidUpdate() {
+    this.props.setScore(this.state.score)
+    this.props.setHighScore(this.state.score)
+  }
     bannerError = () => {
         console.log('banner ad not loading')
       }
@@ -132,6 +141,9 @@ this.showRewarded()
         }
         console.log(this.state.played)
     }
+    continue = () => {
+        this.setState({paused: false})
+    }
 
     render() {
         return (
@@ -154,6 +166,7 @@ this.showRewarded()
                 !this.state.running && !this.state.paused &&
                  <TouchableWrapper style={styles.fullScreenButton} onPress={this.reset}>
                     <View style={styles.fullScreen}>
+                    <Text style={{...styles.gameOverText, marginBottom: 300,}}>Highscore: {this.props.highScore}</Text>
                         <Text style={styles.gameOverText}>Game Over</Text>
                         <TouchableWrapper
                          style={{ flexDirection: "row", paddingVertical: 25 }}
@@ -164,24 +177,28 @@ this.showRewarded()
                              <TouchableWrapper
                          style={{ flexDirection: "row", paddingVertical: 25}} >
                             <Image source={require("../assets/img/refresh.png")} style={styles.icon} />
-                            <Text style={styles.gameOverSubText}>Try Again</Text>
+                            <TouchableWrapper onPress={this.reset}>
+                        <Text style={styles.gameOverSubText} >Try Again</Text>
+                        </TouchableWrapper>
                              </TouchableWrapper>
                     </View>
                 </TouchableWrapper>
                 }
-                
                 {
                 !this.state.running && this.state.paused && 
-                <TouchableWrapper style={styles.fullScreenButton} onPress={() => this.setState({ running: true, paused: false })} >
+                <TouchableWrapper style={styles.fullScreenButton} onPress={() => this.setState({paused: false, running: true})} >
                     <View style={styles.fullScreen}>
                         <Text style={styles.gameOverText}>Game paused</Text>
-                        <Text style={styles.gameOverSubText}>Try Again</Text>
-                        <Text style={styles.gameOverSubText}
-                         onPress={() => this.props.navigation.navigate("StartScreen")} >Go home
-                         </Text>
+                        <TouchableWrapper onPress={this.reset}>
+                        <Text style={styles.gameOverSubText} >Try Again</Text>
+                        </TouchableWrapper>
+                        <TouchableWrapper onPress={() => this.props.navigation.navigate("StartScreen")}>
+                        <Text style={styles.gameOverSubText} >Go home</Text>
+                        </TouchableWrapper>
                     </View>
                 </TouchableWrapper>
                 }
+                
                 <PublisherBanner
   bannerSize="fullBanner"
   style={styles.bottomBanner}
@@ -192,7 +209,51 @@ this.showRewarded()
         );
     }
 }
-
+export default function App() {
+    const [score, setScore] = useState(0)
+    const [highScore, setHighScore] = useState(0)
+    const getValue = async () => {
+      try {
+        const value = await AsyncStorage.getItem("HIGH_SCORE")
+        console.log("getValue", value)
+        setHighScore(value)
+      }
+      catch(e) {
+        console.log("getValue", e)
+      }
+    }
+    const setValue = async () => {
+      try {
+        score > highScore && await AsyncStorage.setItem("HIGH_SCORE", score.toString())
+      }
+      catch(e) {
+        console.log("setValue", e)
+      }
+    }
+    useEffect(() => {
+      console.log(score, highScore)
+    })
+    useEffect(() => {
+      getValue()
+      setValue()
+    }, [score])
+  useEffect(() => {
+    getValue()
+    setValue()
+  }, [])
+  const navigation = useNavigation()
+    return (
+      <>
+      <GameContainer
+      setScore={(value) => setScore(value)}
+      setHighScore={(value) => score > highScore && setHighScore(value)}
+      highScore={highScore}
+      navigation={navigation}
+       />
+       <StatusBar hidden={true}/>
+       </>
+    )
+  }
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -238,6 +299,16 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 72,
         top: 50,
+        left: Constants.MAX_WIDTH / 2 - 20,
+        textShadowColor: '#444444',
+        textShadowOffset: { width: 2, height: 2},
+        textShadowRadius: 2,
+    },
+    highScore: {
+        position: 'absolute',
+        color: 'white',
+        fontSize: 36,
+        top: 80,
         left: Constants.MAX_WIDTH / 2 - 20,
         textShadowColor: '#444444',
         textShadowOffset: { width: 2, height: 2},
