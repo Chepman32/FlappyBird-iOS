@@ -1,12 +1,13 @@
 import React, { Component, useState,useEffect } from 'react';
 import { Dimensions, StyleSheet, Text, View, StatusBar, Alert, TouchableOpacity, Image, Platform, TouchableWithoutFeedback, Button } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { GameEngine } from "react-native-game-engine";
 import { useNavigation } from '@react-navigation/native'
 import Matter from "matter-js";
 import Bird from './Bird';
 import Physics, { resetPipes } from '../Physics';
 import Constants from '../Constants';
+import Images from "../assets/Images"
 // AdMob
 import {
     AdMobBanner,
@@ -49,7 +50,7 @@ componentDidUpdate() {
         console.log('banner ad received')
       }
     showInterstitial = async () => {
-        AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712'); // Test ID, Replace with your-admob-unit-id
+        AdMobInterstitial.setAdUnitID('ca-app-pub-2840764267461073/8800626238'); // Test ID, Replace with your-admob-unit-id
         
         try{
           await AdMobInterstitial.requestAdAsync();
@@ -137,9 +138,8 @@ componentDidUpdate() {
             this.showInterstitial()
         }
         if(this.state.played % 15 === 0 && this.state.played >= 15) {
-this.showRewarded()
+            this.showInterstitial()
         }
-        console.log(this.state.played)
     }
     continue = () => {
         this.setState({paused: false})
@@ -175,11 +175,10 @@ this.showRewarded()
                             <Text style={styles.gameOverSubText}>Go home </Text>
                              </TouchableWrapper>
                              <TouchableWrapper
+                             onPress={this.reset}
                          style={{ flexDirection: "row", paddingVertical: 25}} >
                             <Image source={require("../assets/img/refresh.png")} style={styles.icon} />
-                            <TouchableWrapper onPress={this.reset}>
-                        <Text style={styles.gameOverSubText} >Try Again</Text>
-                        </TouchableWrapper>
+                            <Text style={styles.gameOverSubText} >Try Again</Text>
                              </TouchableWrapper>
                     </View>
                 </TouchableWrapper>
@@ -199,12 +198,7 @@ this.showRewarded()
                 </TouchableWrapper>
                 }
                 
-                <PublisherBanner
-  bannerSize="fullBanner"
-  style={styles.bottomBanner}
-  adUnitID="ca-app-pub-3940256099942544/6300978111" // Test ID, Replace with your-admob-unit-id
-  onDidFailToReceiveAdWithError={this.bannerError}
-  onAdMobDispatchAppEvent={this.adMobEvent} />
+                
             </View>
         );
     }
@@ -215,11 +209,9 @@ export default function App() {
     const getValue = async () => {
       try {
         const value = await AsyncStorage.getItem("HIGH_SCORE")
-        console.log("getValue", value)
         setHighScore(value)
       }
       catch(e) {
-        console.log("getValue", e)
       }
     }
     const setValue = async () => {
@@ -227,11 +219,9 @@ export default function App() {
         score > highScore && await AsyncStorage.setItem("HIGH_SCORE", score.toString())
       }
       catch(e) {
-        console.log("setValue", e)
       }
     }
     useEffect(() => {
-      console.log(score, highScore)
     })
     useEffect(() => {
       getValue()

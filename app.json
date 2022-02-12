@@ -19,8 +19,9 @@
     "ios": {
       "supportsTablet": true,
       "config": {
-        "googleMobileAdsAppId": "ca-app-pub-8828374287987837~5700735858"
-      }
+        "googleMobileAdsAppId": "ca-app-pub-2840764267461073~4332582397"
+      },
+      "bundleIdentifier": "com.Chepman32.FBRemastered"
     },
     "android": {
       "adaptiveIcon": {
