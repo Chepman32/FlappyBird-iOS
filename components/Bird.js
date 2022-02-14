@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { View, Image, Animated } from "react-native";
-import Images from '../assets/Images';
 
 export default class Bird extends Component {
     constructor(props){
@@ -22,7 +21,13 @@ export default class Bird extends Component {
             extrapolate: 'clamp'
         })
 
-        let image = Images['bird' + this.props.pose];
+        let variant = 3
+        let images = {
+            bird1: require(`../assets/img/bird${variant}/bird1.png`),
+            bird2: require(`../assets/img/bird${variant}/bird2.png`),
+            bird3: require(`../assets/img/bird${variant}/bird3.png`),
+        }
+        let image = images['bird' + this.props.pose];
 
         return (
             <Animated.Image

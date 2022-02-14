@@ -150,7 +150,7 @@ const Physics = (entities, { touches, time, dispatch }) => {
     tick += 1;
     if (tick % 5 === 0){
         pose = pose + 1;
-        if (pose > 3){
+        if (pose > 5){
             pose = 1;
         }
         entities.bird.pose = pose;
