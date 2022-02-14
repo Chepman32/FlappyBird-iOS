@@ -9,7 +9,7 @@ export default class App extends Component {
         super(props);
 
         this.state = {
-            running: true,
+            running: true, 
             score: 0,
             played: 0,
         };
