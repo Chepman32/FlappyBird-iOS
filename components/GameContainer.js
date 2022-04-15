@@ -27,8 +27,9 @@ import Floor from './Floor';
 
         this.state = {
             running: true,
-            score: 0,
+            score: 3,
             played: 0,
+            coins: 0
         };
 
         this.gameEngine = null;
@@ -38,6 +39,8 @@ import Floor from './Floor';
 componentDidMount() {
     this.props.setScore(this.state.score)
     this.props.setHighScore(this.state.score)
+    this.props.setCoins(0)
+    this.readLocation()
 }
 componentDidUpdate() {
     this.props.setScore(this.state.score)
@@ -50,7 +53,7 @@ componentDidUpdate() {
         console.log('banner ad received')
       }
     showInterstitial = async () => {
-        AdMobInterstitial.setAdUnitID('ca-app-pub-2840764267461073/8800626238'); // Test ID, Replace with your-admob-unit-id
+        AdMobInterstitial.setAdUnitID('ca-app-pub-3940256099942544/1033173712'); // Test ID, Replace with your-admob-unit-id
         
         try{
           await AdMobInterstitial.requestAdAsync();
@@ -115,37 +118,57 @@ componentDidUpdate() {
     onEvent = (e) => {
         if (e.type === "game-over"){
             //Alert.alert("Game Over");
+            this.props.saveCoins(this.state.coins + this.props.prevCoins)
+            this.props.setCoins(0)
             this.setState({
                 running: false
             });
-        } else if (e.type === "score") {
+        }
+        else if (e.type === "score") {
             this.setState({
-                score: this.state.score + 1
+                score: this.state.score + 1,
+                coins: this.state.coins + 1,
             })
+            this.props.setCoins(this.state.coins)
         }
     }
 
     reset = () => {
+        if(this.state.played % 5 === 0 && this.state.played > 4 && this.state.played !== 15) {
+          this.showInterstitial()
+        }
+        if(this.state.played % 15 === 0 && this.state.played >= 15) {
+          this.showInterstitial()
+        }
         resetPipes();
         this.gameEngine.swap(this.setupWorld());
         this.setState({
             played: this.state.played + 1,
             running: true,
             score: 0,
+            coins: 0,
             paused: false
         });
-        if(this.state.played % 5 === 0 && this.state.played > 4 && this.state.played !== 15) {
-            this.showInterstitial()
-        }
-        if(this.state.played % 15 === 0 && this.state.played >= 15) {
-            this.showInterstitial()
-        }
     }
     continue = () => {
         this.setState({paused: false})
     }
 
+    readLocation = async () => {
+  try {
+    const storedLocation = await AsyncStorage.getItem("LOCATION")
+    if (storedLocation !== null) {
+      console.warn(storedLocation)
+      return storedLocation
+  }
+}
+  catch (e) {
+    alert('Failed to fetch the data from storage')
+  }
+}
+
     render() {
+      const location = this.readLocation()
         return (
             <View style={styles.container}>
                 <Image source={Images.background} style={styles.backgroundImage} resizeMode="stretch" />
@@ -158,9 +181,12 @@ componentDidUpdate() {
                     entities={this.entities}>
                     <StatusBar hidden={true} />
                 </GameEngine>
-                <TouchableWrapper style={styles.pauseBtn} onPress={() => this.setState({ running: false, paused: true })} >
+                {
+                    !this.state.paused &&
+                    <TouchableWrapper style={styles.pauseBtn} onPress={() => this.setState({ running: false, paused: true })} >
                     <Text style={styles.pauseBtnText} >&#10074; &#10074;</Text>
                 </TouchableWrapper>
+                }
                 <Text style={styles.score}>{this.state.score}</Text>
                 {
                 !this.state.running && !this.state.paused &&
@@ -169,14 +195,14 @@ componentDidUpdate() {
                     <Text style={{...styles.gameOverText, marginBottom: 300,}}>Highscore: {this.props.highScore}</Text>
                         <Text style={styles.gameOverText}>Game Over</Text>
                         <TouchableWrapper
-                         style={{ flexDirection: "row", paddingVertical: 25 }}
+                         style={styles.subTextContainer}
                           onPress={() => this.props.navigation.navigate("StartScreen")} >
                             <Image source={require("../assets/img/back.png")} style={styles.icon} />
                             <Text style={styles.gameOverSubText}>Go home </Text>
                              </TouchableWrapper>
                              <TouchableWrapper
                              onPress={this.reset}
-                         style={{ flexDirection: "row", paddingVertical: 25}} >
+                         style={styles.subTextContainer} >
                             <Image source={require("../assets/img/refresh.png")} style={styles.icon} />
                             <Text style={styles.gameOverSubText} >Try Again</Text>
                              </TouchableWrapper>
@@ -185,15 +211,22 @@ componentDidUpdate() {
                 }
                 {
                 !this.state.running && this.state.paused && 
-                <TouchableWrapper style={styles.fullScreenButton} onPress={() => this.setState({paused: false, running: true})} >
+                <TouchableWrapper style={styles.fullScreenButton} onPress={this.reset}>
                     <View style={styles.fullScreen}>
+                    <Text style={{...styles.gameOverText, marginBottom: 300,}}>Highscore: {this.props.highScore}</Text>
                         <Text style={styles.gameOverText}>Game paused</Text>
-                        <TouchableWrapper onPress={this.reset}>
-                        <Text style={styles.gameOverSubText} >Try Again</Text>
-                        </TouchableWrapper>
-                        <TouchableWrapper onPress={() => this.props.navigation.navigate("StartScreen")}>
-                        <Text style={styles.gameOverSubText} >Go home</Text>
-                        </TouchableWrapper>
+                        <TouchableWrapper
+                         style={styles.subTextContainer}
+                          onPress={() => this.props.navigation.navigate("StartScreen")} >
+                            <Image source={require("../assets/img/back.png")} style={styles.icon} />
+                            <Text style={styles.gameOverSubText}>Go home </Text>
+                             </TouchableWrapper>
+                             <TouchableWrapper
+                             onPress={this.reset}
+                         style={styles.subTextContainer} >
+                            <Image source={require("../assets/img/refresh.png")} style={styles.icon} />
+                            <Text style={styles.gameOverSubText} >Try Again</Text>
+                             </TouchableWrapper>
                     </View>
                 </TouchableWrapper>
                 }
@@ -206,10 +239,13 @@ componentDidUpdate() {
 export default function App() {
     const [score, setScore] = useState(0)
     const [highScore, setHighScore] = useState(0)
+    const [prevCoins, setPrevCoins] = useState(0)
+    const [coins, setCoins] = useState(0)
     const getValue = async () => {
       try {
         const value = await AsyncStorage.getItem("HIGH_SCORE")
         setHighScore(value)
+        console.warn("data got",coinsValue)
       }
       catch(e) {
       }
@@ -221,12 +257,36 @@ export default function App() {
       catch(e) {
       }
     }
+    const saveCoins = async (num) => {
+  try {
+    if(coins !== 0) {
+      await AsyncStorage.setItem('COINS', (num).toString())
+    console.warn('Data successfully saved')
+    }
+  } catch (e) {
+    alert('Failed to save the data to the storage')
+  }
+}
+    
+      const getCoins = async () => {
+  try {
+    const prevValue = await AsyncStorage.getItem('COINS')
+    if (prevValue !== null) {
+      setPrevCoins(prevValue)
+    }
+  } catch (e) {
+    alert('Failed to fetch the data from storage')
+  }
+}
+useEffect(() => {
+    getCoins()
+  }, [])
+  
     useEffect(() => {
-    })
-    useEffect(() => {
-      getValue()
       setValue()
     }, [score])
+    useEffect(() => {
+      }, [coins])
   useEffect(() => {
     getValue()
     setValue()
@@ -238,6 +298,10 @@ export default function App() {
       setScore={(value) => setScore(value)}
       setHighScore={(value) => score > highScore && setHighScore(value)}
       highScore={highScore}
+      coins={typeof coins === "string" ? Number(coins) : coins}
+      prevCoins={typeof prevCoins === "string" ? Number(prevCoins) : prevCoins}
+      setCoins={(value) => setCoins(value)}
+      saveCoins={() => saveCoins()}
       navigation={navigation}
        />
        <StatusBar hidden={true}/>
@@ -268,6 +332,11 @@ const styles = StyleSheet.create({
     gameOverText: {
         color: 'white',
         fontSize: 48,
+    },
+    subTextContainer: {
+      marginVertical: height * 0.05,
+      flexDirection: "row",
+      paddingVertical: 25
     },
     gameOverSubText: {
         color: 'white',
@@ -312,6 +381,20 @@ const styles = StyleSheet.create({
     },
     pauseBtnText: {
         fontSize: height * 0.04,
+    },
+    smallCoin: {
+        width:  64,
+        height: 64,
+    },
+    coinsCounter: {
+        position: 'absolute',
+        color: 'white',
+        fontSize: 20,
+        top: 80,
+        left: Constants.MAX_WIDTH / 1.5,
+        textShadowColor: '#444444',
+        textShadowOffset: { width: 2, height: 2},
+        textShadowRadius: 2,
     },
     icon: {
         width: 30,

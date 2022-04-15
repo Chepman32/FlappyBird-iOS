@@ -7,19 +7,54 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import Carousel from 'react-native-snap-carousel';
 import { width, height } from './StartScreen';
 
 export const Selector = () => {
   const [activeIndex, setActiveIndex] = useState(0)
-  const renderItem = ({item}) => {
+  const [currentBird, setCurrentBird] = useState(1)
+  const [currentLocation, setCurrentLocation] = useState(1)
+  
+  const saveBird = async (value) => {
+  try {
+    await AsyncStorage.setItem("BIRD", value)
+    alert('BIRD successfully saved')
+  } catch (e) {
+    alert('Failed to save the data to the storage')
+  }
+}
+
+const saveLocation = async (value) => {
+  try {
+    await AsyncStorage.setItem("LOCATION", value)
+    alert(value + ' successfully saved')
+  } catch (e) {
+    alert('Failed to save the data to the storage')
+  }
+}
+
+  const renderBird = ({item}) => {
     
       return (
         <View style={styles.slide} >
         <Text>{item.num} </Text>
         <Image style={{width: width * 0.3, height: width * 0.3}} source={item.uri} resizeMode="contain" />
-        <TouchableOpacity style={styles.buyBtn} >
-          <Text>Buy {item.type}</Text>
+        <TouchableOpacity onPress={() => saveBird((birdVariants.indexOf(item) + 1).toString())} style={styles.buyBtn} >
+          <Text>Buy {item.type} {birdVariants.indexOf(item) + 1} </Text>
+        </TouchableOpacity>
+        </View>
+
+      )
+  }
+  const renderLocation = ({item}) => {
+    
+      return (
+        <View style={styles.slide} >
+        <Text>{item.num} </Text>
+        <Image style={{width: width * 0.3, height: width * 0.3}} source={item.uri} resizeMode="contain" />
+        <TouchableOpacity onPress={() => saveLocation(item.title)} style={styles.buyBtn} >
+          <Text >Buy {item.type}  </Text>
         </TouchableOpacity>
         </View>
 
@@ -31,10 +66,10 @@ export const Selector = () => {
     {type: "bird", uri: require(`../assets/img/bird3/bird1.png`)},
   ]
   const locationVariants = [
-    {type: "location", uri: require(`../assets/img/background-winter.png`)},
-    {type: "location", uri: require(`../assets/img/background-spring.png`)},
-    {type: "location", uri: require(`../assets/img/background-summer.png`)},
-    {type: "location", uri: require(`../assets/img/background-autumn.png`)},
+    {type: "location", uri: require(`../assets/img/background-winter.png`), title: "Winter"},
+    {type: "location", uri: require(`../assets/img/background-spring.png`), title: "Spring"},
+    {type: "location", uri: require(`../assets/img/background-summer.png`), title: "Summer"},
+    {type: "location", uri: require(`../assets/img/background-autumn.png`), title: "Autumn"},
   ]
   let carousel = null
   return (
@@ -45,7 +80,7 @@ export const Selector = () => {
           horizontal={true}
               ref={(c) => { carousel = c; }}
               data={birdVariants}
-              renderItem={renderItem}
+              renderItem={renderBird}
               sliderWidth={width}
               itemWidth={width}
             />
@@ -54,7 +89,7 @@ export const Selector = () => {
           horizontal={true}
               ref={(c) => { carousel = c; }}
               data={locationVariants}
-              renderItem={renderItem}
+              renderItem={renderLocation}
               sliderWidth={width}
               itemWidth={width}
             />

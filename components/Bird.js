@@ -1,12 +1,32 @@
 import React, { Component } from "react";
 import { View, Image, Animated } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export default class Bird extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-
+        this.state = {
+            bird: 1
+        }
         this.animatedValue = new Animated.Value(this.props.body.velocity.y);
     }
+
+    componentDidMount() {
+        this.readData()
+    }
+    readData = async () => {
+  try {
+    const bird = await AsyncStorage.getItem("BIRD")
+    if (bird !== null) {
+      this.setState({bird: Number(bird)})
+      console.warn(Number(this.state.bird) * 4)
+      return bird
+  }
+}
+  catch (e) {
+    alert('Failed to fetch the data from storage')
+  }
+}
 
     render() {
         const width = this.props.body.bounds.max.x - this.props.body.bounds.min.x;
@@ -21,15 +41,25 @@ export default class Bird extends Component {
             extrapolate: 'clamp'
         })
 
-        let variant = 3
-        let images = {
-            bird1: require(`../assets/img/bird${variant}/bird1.png`),
-            bird2: require(`../assets/img/bird${variant}/bird2.png`),
-            bird3: require(`../assets/img/bird${variant}/bird3.png`),
+        let { bird } = this.state
+        let images = bird === 1 ? {
+            bird1: require(`../assets/img/bird${1}/bird1.png`),
+            bird2: require(`../assets/img/bird${1}/bird2.png`),
+            bird3: require(`../assets/img/bird${1}/bird3.png`),
+        }
+        : bird === 2 ? {
+            bird1: require(`../assets/img/bird${2}/bird1.png`),
+            bird2: require(`../assets/img/bird${2}/bird2.png`),
+            bird3: require(`../assets/img/bird${2}/bird3.png`),
+        }
+        : {
+            bird1: require(`../assets/img/bird${3}/bird1.png`),
+            bird2: require(`../assets/img/bird${3}/bird2.png`),
+            bird3: require(`../assets/img/bird${3}/bird3.png`),
         }
         let image = images['bird' + this.props.pose];
 
-        return (
+        return bird && (
             <Animated.Image
                 style={{
                     position: "absolute",

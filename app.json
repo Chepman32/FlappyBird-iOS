@@ -30,7 +30,8 @@
       },
       "config": {
         "googleMobileAdsAppId": "ca-app-pub-8828374287987837~4927134296"
-      }
+      },
+      "package": "com.Chepman32.FBRemastered"
     },
     "web": {
       "favicon": "./assets/favicon.png"
